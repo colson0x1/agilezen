@@ -3,6 +3,12 @@ import NewProject from './components/NewProject';
 import NoProjectSelected from './components/NoProjectSelected';
 import ProjectSidebar from './components/ProjectSidebar';
 
+/*
+ * <NewProject /> component state is lifted to the <App /> component.
+ * App component has access to the <NewProject /> component where the data is
+ * generated and the state change will be initiated, and the <ProjectSidebar />
+ * component where the data is needed thereafter.
+ * */
 function App() {
   // selectedProjectId prop is either used to store id of the project that
   // was selected from multiple projects, OR null if we want to add
@@ -14,6 +20,7 @@ function App() {
     projects: [],
   });
 
+  // start adding process
   function handleStartAddProject() {
     setProjectsState((prevState) => {
       return {
@@ -23,10 +30,27 @@ function App() {
     });
   }
 
+  // finish adding process
+  function handleAddProject(projectData) {
+    setProjectsState((prevState) => {
+      const newProject = {
+        ...projectData,
+        id: Math.random(),
+      };
+
+      return {
+        ...prevState,
+        projects: [...prevState.projects, newProject],
+      };
+    });
+  }
+
+  console.log(projectsState);
+
   let content;
 
   if (projectsState.selectedProjectId === null) {
-    content = <NewProject />;
+    content = <NewProject onAdd={handleAddProject} />;
   } else if (projectsState.selectedProjectId === undefined) {
     content = <NoProjectSelected onStartAddProject={handleStartAddProject} />;
   }
